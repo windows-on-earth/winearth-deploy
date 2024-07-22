@@ -1,0 +1,29 @@
+# nginx/sites-available/winearth.conf
+
+server {
+    listen 80;
+
+    # Adjusting the timeout value
+    proxy_read_timeout 600s;
+    proxy_connect_timeout 600s;
+
+    server_name localhost;
+    access_log /var/log/winearth/access.log combined;
+    error_log /var/log/winearth/error.log warn;
+    root /usr/share/nginx/html;
+
+    # Redirect to the discovery webui
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Serve the django static files
+    location /static/ {
+        root /static/;
+    }
+
+    # Redirect to the discovery api server
+    location /api/ {
+        proxy_pass http://winearth-api-server:8000/api/;
+    }
+}
