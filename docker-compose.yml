@@ -8,6 +8,8 @@ services:
       - 80:80
       - 443:443
     volumes:
+      # Mount named volume to share files between web UI and nginx proxy
+      - app-volume:/usr/share/nginx/html:rw
       # Mount the nginx folder with the configuration
       - ./nginx:/etc/nginx:ro
       # Static files for django
@@ -25,6 +27,12 @@ services:
     restart: always
     environment:
       - DEBUG=False
+  
+  winearth-webui:
+    image: ghcr.io/windows-on-earth/winearth-webui:0.2.1
+    restart: "no"
+    volumes:
+      - app-volume:/app/dist
 
   certbot:
     image: certbot/certbot:v2.11.0
@@ -35,3 +43,6 @@ services:
       # Mount the certbot renewal wwwroot
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot --webroot-path /var/www/certbot/; sleep 12h & wait $${!}; done;'"
+
+volumes:
+  app-volume:
