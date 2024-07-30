@@ -16,6 +16,14 @@ server {
     location / {
         try_files $uri $uri/ /index.html;
     }
+    
+    location ~ ^/movies/?$ {
+        rewrite ^/movies/?$ /movies.html break;
+    }
+
+    location /movie/ {
+        rewrite ^/movie/(.*)$ /movie/$1.html break;
+    }
 
     # Serve the django static files
     location /static/ {
