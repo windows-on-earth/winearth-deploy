@@ -29,7 +29,7 @@ services:
       - DEBUG=False
   
   winearth-webui:
-    image: ghcr.io/windows-on-earth/winearth-webui:0.2.1
+    image: ghcr.io/windows-on-earth/winearth-webui:0.3.0
     restart: "no"
     volumes:
       - app-volume:/app/dist
