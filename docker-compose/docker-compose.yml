@@ -1,5 +1,4 @@
 ---
-version: '3'
 services:
   proxy:
     image: nginx:1.27
@@ -13,7 +12,7 @@ services:
       # Mount the nginx folder with the configuration
       - ./nginx:/etc/nginx:ro
       # Static files for django
-      - ./static:/static/static:ro
+      - static-volume:/static/static:ro
       # Mount the nginx log folder
       - ./log:/var/log/winearth:rw
       # Mount the letsencrypt certificates
@@ -21,18 +20,28 @@ services:
       # Mount the certbot renewal wwwroot
       - ./certbot/www:/var/www/certbot:ro
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    depends_on:
+      winearth-api-server:
+        condition: service_started
+      winearth-webui:
+        condition: service_started
 
   winearth-api-server:
-    image: ghcr.io/windows-on-earth/winearth-api:0.1.4
+    image: ghcr.io/windows-on-earth/winearth-api:0.1.5
     restart: always
     environment:
       - DEBUG=False
+    volumes:
+      - static-volume:/django/static
   
   winearth-webui:
     image: ghcr.io/windows-on-earth/winearth-webui:1.0.1
     restart: "no"
     volumes:
       - app-volume:/app/dist
+    depends_on:
+      winearth-api-server:
+        condition: service_started
 
   certbot:
     image: certbot/certbot:v2.11.0
@@ -46,3 +55,4 @@ services:
 
 volumes:
   app-volume:
+  static-volume:

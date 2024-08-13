@@ -1,0 +1,4 @@
+---
+winearth_username: ubuntu
+winearth_group: ubuntu
+winearth_root_directory: /home/ubuntu/winearth

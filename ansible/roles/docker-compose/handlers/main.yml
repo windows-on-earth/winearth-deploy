@@ -1,0 +1,17 @@
+---
+- name: Run docker-compose down
+  community.docker.docker_compose_v2:
+    project_src: "{{ winearth_root_directory }}/"
+    state: absent
+  listen: "update docker-compose"
+
+- name: Run docker-compose up
+  community.docker.docker_compose_v2:
+    project_src: "{{ winearth_root_directory }}/"
+    state: present
+  listen: "update docker-compose"
+
+- name: Give the docker-compose containers time to start
+  ansible.builtin.pause:
+    seconds: 120
+  listen: "update docker-compose"
