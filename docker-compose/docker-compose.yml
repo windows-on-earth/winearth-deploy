@@ -33,7 +33,7 @@ services:
       - DEBUG=False
     volumes:
       - static-volume:/django/static
-  
+
   winearth-webui:
     image: ghcr.io/windows-on-earth/winearth-webui:1.0.1
     restart: "no"
