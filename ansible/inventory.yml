@@ -1,0 +1,5 @@
+---
+all:
+  hosts:
+    winearth:
+      ansible_host: 132.249.238.241

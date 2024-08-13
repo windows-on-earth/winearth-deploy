@@ -1,0 +1,14 @@
+---
+- name: Check that the winearth api website is running (https)
+  ansible.builtin.uri:
+    url: "https://{{ winearth_host }}/api/movies/ISS028-E-32405-33003/"
+    return_content: true
+  register: this
+  failed_when: "'ISS028-E-32405-33003' not in this.content"
+
+- name: Check that the FAIR Data Point website is running (https)
+  ansible.builtin.uri:
+    url: "https://{{ winearth_host }}/movies"
+    return_content: true
+  register: this
+  failed_when: "'Windows on Earth Web UI' not in this.content"

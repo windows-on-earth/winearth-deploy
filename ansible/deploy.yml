@@ -1,0 +1,13 @@
+---
+- name: Deploy winearth website with Docker Compose
+  hosts:
+   - winearth
+  remote_user: ubuntu
+  become: true
+  become_method: ansible.builtin.sudo
+  gather_facts: false
+  vars:
+   winearth_host: winearth.sdsc.edu
+  roles:
+   - docker-compose
+   - update-verify

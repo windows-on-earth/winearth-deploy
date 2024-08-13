@@ -1,0 +1,70 @@
+---
+- name: Create the winearth_root_directory directory if they don't exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ winearth_username }}"
+    group: "{{ winearth_group }}"
+    mode: '0755'
+  with_items:
+    - "{{ winearth_root_directory }}/"
+
+- name: Create the winearth_root_directory directories if they don't exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0777'
+  with_items:
+    - "{{ winearth_root_directory }}/certbot/"
+    - "{{ winearth_root_directory }}/certbot/conf/"
+    - "{{ winearth_root_directory }}/certbot/www/"
+    - "{{ winearth_root_directory }}/log/"
+    - "{{ winearth_root_directory }}/nginx/"
+    - "{{ winearth_root_directory }}/nginx/sites-enabled/"
+
+- name: Copy the withearth support files
+  ansible.builtin.copy:
+    src: "../docker-compose/{{ item }}"
+    dest: "{{ winearth_root_directory }}/{{ item }}"
+    owner: "{{ winearth_username }}"
+    group: "{{ winearth_group }}"
+    mode: '0644'
+  with_items:
+    - docker-compose.yml
+    - nginx/nginx.conf
+    - nginx/mime.types
+    - nginx/sites-enabled/winearth.conf
+  notify: "update docker-compose"
+
+- name: Check if the SSL certs already exist
+  ansible.builtin.stat:
+    path: "{{ winearth_root_directory }}/certbot/conf/live/{{ winearth_host }}"
+  register: cert_path
+
+- name: Install SSL certs if they don't already exist
+  when: not cert_path.stat.exists
+  block:
+    - name: Run docker-compose down
+      community.docker.docker_compose_v2:
+        project_src: "{{ winearth_root_directory }}"
+        state: absent
+
+    - name: Generate the SSL Certs using Let's Encrypt and CertBot
+      community.docker.docker_container:
+        name: certbot
+        state: started
+        image: certbot/certbot
+        interactive: true
+        detach: false
+        auto_remove: true
+        ports:
+          - 80:80
+        volumes:
+          - "{{ winearth_root_directory }}/certbot/conf:/etc/letsencrypt"
+          - "{{ winearth_root_directory }}/certbot/www:/var/www/certbot"
+        command: |
+          certonly --standalone --email kcoakley@sdsc.edu -d {{ winearth_host }}
+          --rsa-key-size 4096 --agree-tos --no-eff-email --non-interactive
+
+- name: Restart docker-compose if needed
+  ansible.builtin.meta: flush_handlers
