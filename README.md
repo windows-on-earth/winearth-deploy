@@ -7,7 +7,6 @@
     mkdir -p certbot/conf
     mkdir -p certbot/www
     mkdir -p log
-    mkdir -p static
 
 ### Generate Intial SSL Certificates
 
