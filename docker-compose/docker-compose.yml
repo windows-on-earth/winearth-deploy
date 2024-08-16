@@ -27,7 +27,7 @@ services:
         condition: service_started
 
   winearth-api-server:
-    image: ghcr.io/windows-on-earth/winearth-api:0.1.5
+    image: ghcr.io/windows-on-earth/winearth-api:0.1.6
     restart: always
     environment:
       - DEBUG=False
