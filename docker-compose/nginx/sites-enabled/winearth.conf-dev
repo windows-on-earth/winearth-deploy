@@ -26,7 +26,7 @@ server {
     }
 
     # Serve the django static files
-    location /static/ {
+    location /django-static/ {
         root /static/;
     }
 

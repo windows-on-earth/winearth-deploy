@@ -12,7 +12,7 @@ services:
       # Mount the nginx folder with the configuration
       - ./nginx:/etc/nginx:ro
       # Static files for django
-      - static-volume:/static/static:ro
+      - django-static-volume:/static/django-static:ro
       # Mount the nginx log folder
       - ./log:/var/log/winearth:rw
       # Mount the letsencrypt certificates
@@ -27,12 +27,12 @@ services:
         condition: service_started
 
   winearth-api-server:
-    image: ghcr.io/windows-on-earth/winearth-api:0.1.6
+    image: ghcr.io/windows-on-earth/winearth-api:0.1.7
     restart: always
     environment:
       - DEBUG=False
     volumes:
-      - static-volume:/django/static
+      - django-static-volume:/django/static
 
   winearth-webui:
     image: ghcr.io/windows-on-earth/winearth-webui:1.0.1
@@ -55,4 +55,4 @@ services:
 
 volumes:
   app-volume:
-  static-volume:
+  django-static-volume:
