@@ -33,7 +33,7 @@ services:
       - django-static-volume:/django/static
 
   winearth-webui:
-    image: ghcr.io/windows-on-earth/winearth-webui:1.1.1
+    image: ghcr.io/windows-on-earth/winearth-webui:1.1.2
     restart: "no"
     depends_on:
       winearth-api-server:
