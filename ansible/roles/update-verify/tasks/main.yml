@@ -1,10 +1,10 @@
 ---
 - name: Check that the winearth api website is running (https)
   ansible.builtin.uri:
-    url: "https://{{ winearth_host }}/api/movies/ISS028-E-32405-33003/"
+    url: "https://{{ winearth_host }}/api/movies/ISS048-E-17474-17804/"
     return_content: true
   register: this
-  failed_when: "'ISS028-E-32405-33003' not in this.content"
+  failed_when: "'ISS048-E-17474-17804' not in this.content"
 
 - name: Check that the FAIR Data Point website is running (https)
   ansible.builtin.uri:
